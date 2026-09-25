@@ -1,0 +1,4 @@
+interface:
+  display_name: "网易我的世界英文界面"
+  short_description: "设置网易中国版基岩与 Java 英文菜单，排查启动问题并截图验收"
+  default_prompt: "使用 $minecraft-netease-english 检查这台 Windows 电脑的网易《我的世界》，将需要的基岩版或 Java 版游戏内菜单设为英文，确认重新启动后仍生效，并逐页截图验证。"

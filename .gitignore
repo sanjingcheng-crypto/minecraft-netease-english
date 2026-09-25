@@ -1,0 +1,14 @@
+# Keep game data, screenshots, launcher links and local backups out of this public skill.
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.lnk
+*.url
+options.txt
+*.bak
+*.log
+*.zip
+.env*
+*.key
+*.pem
