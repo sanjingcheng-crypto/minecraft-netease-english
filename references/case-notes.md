@@ -26,3 +26,9 @@
 若修改不生效：确认正在编辑的目录是当前 `Minecraft.Windows.exe` 的目录，选对登录游戏的 Windows 用户的 `options.txt`；必须完整退出游戏后编辑，并重新进入世界。若资源文件键名改变，先搜索游戏包中屏幕上的原文，再核对上下文。本节的基岩配置文件与资源包流程不适用于 Java 版或国际版。
 
 复查基准：暂停菜单四个按钮、所有可见设置分类、Video 页滚动到底部及展开高级图形项、模组设置标题。实测曾留有 16 张最终截图；其中退出后的网易启动器截图保留中文，作为“未完全英文”的证据。截图与逐步图解含玩家名称、世界名称等个人信息，因此未纳入公开仓库。换电脑必须重新截图。
+
+## 第二台电脑的补充实测（2026-09-27）
+
+- 当前基岩配置与一个旧的 `MinecraftPC_Netease_PB` 配置同时存在。只修改后者时，游戏退出后前者仍写成 `game_language:zh_CN`。按文件修改时间确认 `MinecraftPE_Netease\minecraftpe\options.txt` 才是生效文件，再修改并重启验证。
+- 游戏根目录在另一盘的 `MCLDownload\MinecraftBENeteasePath\x64_mc`，说明不能假定与第一台电脑同盘。脚本从实际游戏根目录审计资源键后，改动了四个文件；重进游戏后暂停菜单、Settings、Video、Audio 与 Mod Information 为英文。
+- Windows PowerShell 5.1 对单元素 JSON 数组套 `@(...)` 会形成嵌套数组，原资源清单审计误报；脚本现已逐项展开。脚本保留 UTF-8 BOM 以便 PowerShell 5.1 正确读取中文匹配字面量。游戏接受的网易 UI JSON 可能被 PowerShell 5.1 的 `ConvertFrom-Json` 拒绝，因此针对已审计的唯一字符串做精确替换，不以该解析器结果判断游戏 JSON 是否有效。

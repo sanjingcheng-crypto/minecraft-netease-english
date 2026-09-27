@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
     [string]$GameRoot,
@@ -28,7 +28,7 @@ foreach ($path in $required) {
     }
 }
 
-$manifest = @(Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json)
+$manifest = @((Get-Content -LiteralPath $manifestPath -Raw -Encoding UTF8 | ConvertFrom-Json) | ForEach-Object { $_ })
 if (-not ($manifest -contains 'zh_CN') -or ($manifest -contains 'en_US')) {
     throw "Unexpected vanilla_netease language manifest at $manifestPath. Inspect this version before patching."
 }
@@ -92,12 +92,13 @@ foreach ($key in $translations.Keys) {
 $updated[$langPath] = $lang
 
 $general = Replace-OneLiteral -Text $records[$generalPath].Text -Old '"$option_label": "渲染引擎"' -New '"$option_label": "Rendering Engine"'
-$null = $general | ConvertFrom-Json
+# Bedrock UI JSON can contain constructs rejected by Windows PowerShell 5.1's
+# ConvertFrom-Json even when the game accepts the original file. The exact
+# quoted-value replacement above preserves the file's surrounding syntax.
 $updated[$generalPath] = $general
 
 $mod = Replace-OneLiteral -Text $records[$modPath].Text -Old '"text": "模组信息"' -New '"text": "Mod Information"'
 $mod = Replace-OneLiteral -Text $mod -Old '"$place_holder_text": "请输入内容"' -New '"$place_holder_text": "Enter text"'
-$null = $mod | ConvertFrom-Json
 $updated[$modPath] = $mod
 
 $changed = @($updated.Keys | Where-Object { $updated[$_] -cne $records[$_].Text })

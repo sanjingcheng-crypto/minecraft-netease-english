@@ -5,7 +5,7 @@ description: 将 Windows 网易中国版《我的世界》基岩版或 Java 版�
 
 # 网易《我的世界》英文游戏界面
 
-目标是让玩家**实际进入的游戏菜单和设置**显示英文，并留下重新打开游戏的清楚路径与截图证据。网易启动器、启动提示、品牌图像、玩家昵称和世界名可能继续显示中文；不要把这种结果称为“全部英文”。本 skill 来自 2026-09-24 至 25 日对中国版基岩端 1.21.120.0 和 Java NeoForge 1.21.10 的实测。路径、版本与资源键在另一台电脑上都要重新确认。
+目标是让玩家**实际进入的游戏菜单和设置**显示英文，并留下重新打开游戏的清楚路径与截图证据。网易启动器、启动提示、品牌图像、玩家昵称和世界名可能继续显示中文；不要把这种结果称为“全部英文”。本 skill 来自 2026-09-24 至 27 日在两台 Windows 电脑上对中国版基岩端和 Java NeoForge 1.21.10 的实测。路径、版本与资源键在另一台电脑上都要重新确认。
 
 ## 先认清启动入口
 
@@ -15,7 +15,7 @@ description: 将 Windows 网易中国版《我的世界》基岩版或 Java 版�
 
 ## 基岩版：语言与网易残留文本
 
-1. 启动一次基岩版以生成当前 Windows 用户的 `%APPDATA%\MinecraftPE_Netease\minecraftpe\options.txt`。用实际 `Minecraft.Windows.exe` 进程定位游戏根目录，完整退出游戏后再修改。安装目录和用户名不能照抄案例路径。
+1. 启动一次基岩版以生成当前 Windows 用户的配置。实测有效路径为 `%APPDATA%\MinecraftPE_Netease\minecraftpe\options.txt`；另有电脑同时存在旧的 `MinecraftPC_Netease_PB\minecraftpe\options.txt`，改旧文件不会生效。按最近修改时间及实际启动后的写入情况确认当前配置。用实际 `Minecraft.Windows.exe` 进程定位游戏根目录，完整退出游戏后再修改。安装目录和用户名不能照抄案例路径。
 2. 运行 [Set-NeteaseMinecraftEnglish.ps1](scripts/Set-NeteaseMinecraftEnglish.ps1)：先用 `-AuditOnly` 检查文件结构与待改项目，再正式执行。它备份原文件，把 `game_language` 改为 `en_US`，并对已验证的 `Mod Settings`、画质、渲染引擎和模组信息残留文本做最小补丁。若资源结构、键数量或 JSON 不符合预期，停下检查新版本；不要整包批量翻译，也不要伪造 `en_US.lang`。
 3. 从已安装启动器重新进入世界。按 Esc 核对 `Resume Game`、`Settings`、`Mod Settings`、`Save & Quit`；打开 Settings，核对 Accessibility、Game、Keyboard & Mouse、Video、Audio 等分类，以及用户要求的每个子页。仅看到文件中 `game_language:en_US` 不算验收通过。
 4. 如果从打包的 Codex 桌面应用操作，普通 AppData 路径可能读到应用私有副本。脚本对本地盘符路径使用 `\\?\` 扩展路径来访问真实用户文件；仍须在新启动的游戏里验证。若游戏仍中文，优先读[实测问题与排查](references/case-notes.md)中的配置副本案例。
@@ -33,8 +33,8 @@ $game = 'C:\path\to\BedrockGame'
 
 ## Java 版：语言与重启保持
 
-1. 定位**当前启动的** Java 游戏目录和 `options.txt`，先在游戏内 Options → Language 选择 `English (US)`。完整退出并从网易启动器再启动，确认 `lang:en_us` 是否保留。Java 版和基岩版使用不同配置文件及大小写；不要改基岩版的 `game_language` 来替代 Java 设置。
-2. 如果网易启动器在每次启动时把 Java 语言改回中文，先备份 `options.txt`，再用 [Start-NeteaseMinecraftJavaEnglish.ps1](scripts/Start-NeteaseMinecraftJavaEnglish.ps1) 进行有条件的语言保护：游戏启动前写入 `lang:en_us` 并临时设只读，游戏窗口出现后解锁以允许正常保存，游戏退出后再次写回英文并恢复只读。先运行 `-AuditOnly`，再用实际启动器、游戏目录及 `javaw.exe` 路径运行。脚本拒绝在目标启动器或游戏已运行时再启动一个实例。
+1. 定位**当前启动的** Java 游戏目录和 `options.txt`，先在游戏内 Options → Language 选择 `English (US)`。完整退出并从网易启动器再启动，确认 `lang:en_us` 是否保留。另一台电脑上 `MCLDownload\Game\.minecraft\options.txt` 已是英文，但只是模板；实际被重写的文件在 `netease_minecraft_neoforge\options.txt`。可比较候选文件在启动前后的修改时间，但不要把模板当作实际配置。Java 版和基岩版使用不同配置文件及大小写。
+2. 如果网易启动器在每次启动时把 Java 语言改回中文，先备份 `options.txt`，再用 [Start-NeteaseMinecraftJavaEnglish.ps1](scripts/Start-NeteaseMinecraftJavaEnglish.ps1) 进行有条件的语言保护：游戏启动前写入 `lang:en_us` 并临时设只读，游戏窗口出现后解锁以允许正常保存，游戏退出后再次写回英文并恢复只读。先运行 `-AuditOnly`，再用实际启动器、游戏目录及 `javaw.exe` 路径运行。脚本拒绝在目标启动器或游戏已运行时再启动一个实例。另一台电脑通过备份后将实际 `options.txt` 设为只读，用原启动器重启后验证英文；这种简化方法会使其它游戏设置也无法写回该文件，只有用户接受该限制时才保留。
 3. 只有实测机器缺少可用 OpenGL 时才考虑脚本的 `-SoftwareOpenGL` 选项和可信来源的图形兼容组件；这是图形兼容措施，不是翻译所需步骤。Java 版加载可能较慢。详细证据与参数见 [Java 版实测](references/java-case.md)。
 4. 进入世界按 Esc，应看到 `Game Menu`、`Options...`、`Save and Quit to Title`；点 Options 应看到 `Language...`、`Video Settings...`、`Controls...` 等英文项。正常退出，再重开一次验证语言不会反弹。
 
