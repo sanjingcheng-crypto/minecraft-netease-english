@@ -15,8 +15,8 @@ description: 将 Windows 网易中国版《我的世界》基岩版或 Java 版�
 
 ## 基岩版：语言与网易残留文本
 
-1. 启动一次基岩版以生成当前 Windows 用户的配置。实测有效路径为 `%APPDATA%\MinecraftPE_Netease\minecraftpe\options.txt`；另有电脑同时存在旧的 `MinecraftPC_Netease_PB\minecraftpe\options.txt`，改旧文件不会生效。按最近修改时间及实际启动后的写入情况确认当前配置。用实际 `Minecraft.Windows.exe` 进程定位游戏根目录，完整退出游戏后再修改。安装目录和用户名不能照抄案例路径。
-2. 运行 [Set-NeteaseMinecraftEnglish.ps1](scripts/Set-NeteaseMinecraftEnglish.ps1)：先用 `-AuditOnly` 检查文件结构与待改项目，再正式执行。它备份原文件，把 `game_language` 改为 `en_US`，并对已验证的 `Mod Settings`、画质、渲染引擎和模组信息残留文本做最小补丁。若资源结构、键数量或 JSON 不符合预期，停下检查新版本；不要整包批量翻译，也不要伪造 `en_US.lang`。
+1. 启动一次基岩版以生成当前 Windows 用户的配置。`%APPDATA%\MinecraftPE_Netease\minecraftpe\options.txt` 和 `%APPDATA%\MinecraftPC_Netease_PB\minecraftpe\options.txt` 都曾在不同启动路径下生效；同一电脑上两份可同时存在，不能按目录名称判断新旧。完整退出游戏，比较两份配置在刚才启动后的修改时间和 `game_language`，只修改当前实际写入的那份。用实际 `Minecraft.Windows.exe` 进程定位游戏根目录。安装目录和用户名不能照抄案例路径。
+2. 如果当前游戏根目录的 `data\resource_packs\vanilla_netease` 是可浏览的目录，运行 [Set-NeteaseMinecraftEnglish.ps1](scripts/Set-NeteaseMinecraftEnglish.ps1)：先用 `-AuditOnly` 检查文件结构与待改项目，再正式执行。它备份原文件，把 `game_language` 改为 `en_US`，并对已验证的 `Mod Settings`、画质、渲染引擎和模组信息残留文本做最小补丁。另一次实测的资源包是无扩展名的单个打包文件，此脚本不适用；先备份并只改当前生效的 `options.txt`，再用游戏菜单验收。若资源结构、键数量或 JSON 不符合预期，停下检查新版本；不要整包批量翻译，也不要伪造 `en_US.lang`。
 3. 从已安装启动器重新进入世界。按 Esc 核对 `Resume Game`、`Settings`、`Mod Settings`、`Save & Quit`；打开 Settings，核对 Accessibility、Game、Keyboard & Mouse、Video、Audio 等分类，以及用户要求的每个子页。仅看到文件中 `game_language:en_US` 不算验收通过。
 4. 如果从打包的 Codex 桌面应用操作，普通 AppData 路径可能读到应用私有副本。脚本对本地盘符路径使用 `\\?\` 扩展路径来访问真实用户文件；仍须在新启动的游戏里验证。若游戏仍中文，优先读[实测问题与排查](references/case-notes.md)中的配置副本案例。
 

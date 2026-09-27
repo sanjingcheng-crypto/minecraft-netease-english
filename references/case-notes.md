@@ -29,6 +29,13 @@
 
 ## 第二台电脑的补充实测（2026-09-27）
 
-- 当前基岩配置与一个旧的 `MinecraftPC_Netease_PB` 配置同时存在。只修改后者时，游戏退出后前者仍写成 `game_language:zh_CN`。按文件修改时间确认 `MinecraftPE_Netease\minecraftpe\options.txt` 才是生效文件，再修改并重启验证。
+- 两份基岩配置 `MinecraftPE_Netease` 与 `MinecraftPC_Netease_PB` 同时存在。在 9 月 27 日的一次启动中，前者随游戏更新，改为 `en_US` 后英文生效；但后续从桌面正常入口重开，实际客户端与配置路径发生切换，不能永久把后者当成旧配置。
 - 游戏根目录在另一盘的 `MCLDownload\MinecraftBENeteasePath\x64_mc`，说明不能假定与第一台电脑同盘。脚本从实际游戏根目录审计资源键后，改动了四个文件；重进游戏后暂停菜单、Settings、Video、Audio 与 Mod Information 为英文。
 - Windows PowerShell 5.1 对单元素 JSON 数组套 `@(...)` 会形成嵌套数组，原资源清单审计误报；脚本现已逐项展开。脚本保留 UTF-8 BOM 以便 PowerShell 5.1 正确读取中文匹配字面量。游戏接受的网易 UI JSON 可能被 PowerShell 5.1 的 `ConvertFrom-Json` 拒绝，因此针对已审计的唯一字符串做精确替换，不以该解析器结果判断游戏 JSON 是否有效。
+
+### 重启后再次变中文的根因与修复
+
+- 9 月 27 日目标机重启后，从桌面正常入口进入的基岩版暂停菜单和设置页均为中文。任务管理器“打开文件所在的位置”确认本次 `Minecraft.Windows.exe` 进程位于另一套已安装客户端，不是此前补丁针对的客户端。前者的 `data\resource_packs` 中 `vanilla`、`vanilla_netease` 是无扩展名的单个打包文件，不能使用只处理可浏览资源目录的脚本给它打补丁。
+- 在真实用户的 Roaming 目录里，`MinecraftPE_Netease\minecraftpe\options.txt` 保持 `game_language:en_US`，但修改时间停留在这次启动前；`MinecraftPC_Netease_PB\minecraftpe\options.txt` 则在刚才游戏启动后更新，且内容为 `game_language:zh_CN`。以实际启动后的写入时间和内容区分当前配置，再完整退出游戏，将活跃文件备份并仅把 `game_language` 改为 `en_US`。
+- 从桌面入口启动并进入世界后，暂停菜单四按钮显示 `Resume Game`、`Settings`、`Mod Settings`、`Save & Quit`，设置分类和选项也显示英文。保存退出游戏后又启动一次，暂停菜单仍为英文。网易徽标、账号昵称及世界名称仍显示中文，属于其它文本来源。
+- 排查新电脑时的顺序：先定位当前进程的可执行文件，再比较候选 `options.txt` 的修改时间及语言值，修改活跃文件，最后在实际游戏菜单验收。不能沿用上次有效的目录，也不能只凭一份配置里已经写着 `en_US` 就认定游戏应为英文。
